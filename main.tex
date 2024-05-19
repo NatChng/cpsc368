@@ -1,0 +1,1112 @@
+% \documentclass{article}
+\documentclass[8pt,landscape,a4paper, fleqn, dvipsnames]{extarticle}
+% !TEX enableShellEscape = yes
+% (The above line makes atom's latex package compile with -shell-escape
+% for minted, and is just ignored by other systems.)
+\usepackage{minted}
+\usepackage{minted} \BeforeBeginEnvironment{minted}{\begingroup\color{black}} \AfterEndEnvironment{minted}{\endgroup} \setminted{autogobble,breaklines,breakanywhere,linenos}
+
+\usepackage{minted}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{multicol}
+\usepackage{amsmath,amssymb}
+% \usepackage[fleqn]{amsmath}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage[top=0.5cm,bottom=0.5cm,left=0.6cm,right=0.6cm]{geometry}
+
+% section spacing
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{0.4\baselineskip}{0.2\baselineskip}
+
+% Math
+\def\R{\mathbb{R}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+
+% matrix
+\newcommand{\zm}{%
+  \begin{bmatrix}
+    - z_1^T - \\
+    - z_2^T - \\
+    \ldots \\
+    - z_n^T -
+  \end{bmatrix}%
+}
+\newcommand{\wm}{%
+  \begin{bmatrix}
+    - w_1^T - \\
+    - w_2^T - \\
+    \ldots \\
+    - w_k^T -
+  \end{bmatrix}%
+}
+\newcommand{\wmm}{%
+  \begin{bmatrix}
+    \mid &\mid  &\ldots &\mid\\
+    w^1 & w^2 &\ldots &w^d\\
+    \mid &\mid  &\ldots &\mid
+  \end{bmatrix}%
+}
+
+\usepackage{enumitem}
+\setlist{nolistsep, itemsep = 1pt, leftmargin = 1em}
+\setlist[2]{nolistsep, topsep = 1pt, leftmargin = 1em}
+% \setlist{itemsep=1pt, topsep=1pt, leftmargin = 1em}
+% \setlist[2]{itemsep=1pt, topsep=1pt, leftmargin = 1.5em}
+\renewcommand{\labelitemii}{$\circ$}
+\renewcommand{\labelitemiii}{$\rightarrow$}
+
+\usepackage{xcolor}
+% \usepackage[dvipsnames]{xcolor}
+\definecolor{mygray}{rgb}{0.8,0.8,0.8}
+\usepackage{listings}
+\lstset{%
+basicstyle=\ttfamily,
+breaklines = true,
+% backgroundcolor=\color{mygray},
+}
+\usepackage{realboxes}
+\usepackage{soul}
+% \setlength{\abovedisplayskip}{0pt}
+% \setlength{\belowdisplayskip}{0pt}
+% \setlength{\abovedisplayshortskip}{0pt}
+% \setlength{\belowdisplayshortskip}{0pt}
+
+\begin{document}
+\begin{multicols*}{4}
+
+% \begin{minted}[linenos=false]{python}
+%     # Least squares where each sample point X has a weight associated with it.
+%     class WeightedLeastSquares(LeastSquares):
+%     # inherits the predict() function from LeastSquares
+%     def fit(self, X, y, v):
+%         """YOUR CODE HERE FOR Q3.1"""
+%         weights = np.diag(v)
+%         self.w = solve(X.T @ weights @ X, X.T @ weights @ y)
+% \end{minted}
+
+\section*{\ul{Chapter 1: Conceptual Design}}
+\begin{itemize}
+    \item 3 levels of abstraction: external (describes different parts to different users), logical (how data is perceived), physical (how data is stored)
+    \begin{itemize}
+        \item Schema: logical structure
+        \item Instances: content at a point in time
+    \end{itemize}
+    \item ER Diagrams: info about entities and relationships, integrity constraints
+    \item Entity: Objects distinguishable from other objects
+    \begin{itemize}
+        \item Attributes: Used to describe an entity. Each has a domain (ex. float, int, date, etc.)
+        \item Entity Set: Collection of similar entities.
+    \end{itemize}
+    \item Keys: Used to distinguish an entity set, minimal set of 1+ attributes that can uniquely identify an entity in a set
+    \begin{itemize}
+        \item Primary key: key chosen as principal means to identify entities in an entity set
+        \item Primary key attributes are underlined
+    \end{itemize}
+    \item Relationship: Association between 2+ entities
+    \begin{itemize}
+        \item Relationship set: collection of similar relationships
+        \item Degree/Arity: Number of entity sets in a relationship 
+    \end{itemize}
+    \item Cardinality ratio: number of relationships in the set an entity can participate in
+    \begin{itemize}
+        \item 1-1: Entity in A is exclusively associated with 1 entity in B and vice-versa.
+        \item 1-many: Entity in A is associated with any number of entities in B, B is associated with 1 entity in A.
+        \item Many-1: Opposite of above.
+        \item Many-many: Entity in A associated with any number of entities in B and vice-versa
+    \end{itemize}
+    \item Key constraints are shown with arrows in ER diagram
+    \begin{itemize}
+        \item Arrow points towards the 1. Ex. A and B are 1-many, arrow goes from B to A
+    \end{itemize}
+    \item Participation: Whether or not an entity participates in a relationship. Can be total or partial
+    \begin{itemize}
+        \item Total participation is shown using a thick line from the entity to the relationship
+    \end{itemize}
+    \item ISA relationship: If A ISA B, every A entity is a B entity
+    \begin{itemize}
+        \item Used to group entities according to shared behaviour
+        \item Allows for more description of specific subclasses and restricts entities in a relationship
+    \end{itemize}
+    \item Overlap constraints:
+    \begin{itemize}
+        \item Disjoint: Superclass belongs to no more than 1 subclass
+        \item Overlapping: Subclasses may overlap
+    \end{itemize}
+    \item Covering constraints:
+    \begin{itemize}
+        \item Total: Superclass must belong to some subclass
+        \item Partial: Some superclass may not be in any subclass
+    \end{itemize}
+    \item Weak entities can only be identified by considering the key of an owner entity
+    \begin{itemize}
+        \item Owner set and weak entity must have a 1-many relationship
+        \item Weak must have total participation in the identifying relationship set (ie. it belongs to)
+        \item Weak entity sets and their identifying relationship sets are shown with thick lines around the relationship and entity
+    \end{itemize}
+    \item Aggregation treats relationship set as an entity for participation in other relationships (dotted box around the aggregate)
+    \end{itemize}
+
+\section*{\ul{Chapter 2: Relational Model}}
+\begin{itemize}
+    \item Relational database: set of relations, each made of 2 parts
+    \begin{itemize}
+        \item Schema: name of relation and name + domain of each attribute (ex. Student(\textit{id}: string, \textit{name}: string, \textit{major}: string))
+        \item Instance: a table with rows (num rows = cardinality, each row is a tuple) and columns (num cols = arity, each column is an attribute)
+        \item Domain value: individual value in an instance
+    \end{itemize}
+    \item Relational database schema: collection of schema in database
+    \item Database instance: collection of instances of its relations
+\end{itemize}
+\begin{lstlisting}[language = SQL]
+SELECT sid, name phone
+FROM Students
+WHERE major = "CPSC"
+\end{lstlisting}
+\begin{itemize}
+    \item Select: functions the same as R, specify what attributes are being selected. (SELECT * is all attributes)
+    \item From: specifies the relation
+    \item Where: acts the same as filter in R.
+\end{itemize}
+\begin{lstlisting}[language = SQL]
+CREATE TABLE Student
+    (sid INTEGER,
+    name CHAR(20),
+    major CHAR(4))
+\end{lstlisting}
+\begin{itemize}
+    \item Create table: Creates relation with whatever name we give
+    \item Statements on the left are the attributes, statements on the right are information on what type of data is stored in each attribute
+\end{itemize}
+\begin{lstlisting}[language = SQL]
+DROP TABLE Student
+\end{lstlisting}
+\begin{itemize}
+    \item Deletes Student's schema info and tuples (like drop transformation)
+\end{itemize}
+\begin{lstlisting}[language = SQL]
+ALTER TABLE Student
+    ADD COLUMN gpa REAL;
+\end{lstlisting}
+\begin{itemize}
+    \item Alter table: Edits the table
+    \item Add column: adds a column/attribute with the following name
+\end{itemize}
+\begin{lstlisting}[language = SQL]
+INSERT
+INTO Student(sid, name, major)
+VALUES (82518564, "N. Chang", "ISCI")
+\end{lstlisting}
+\begin{itemize}
+    \item Insert: Can manually insert values into table
+    \item Into: Specify the relation and its attributes
+    \item Values: Specify the tuple to be added
+\end{itemize}
+\begin{lstlisting}[language = SQL]
+DELETE
+FROM Student
+WHERE name = "Nathan"
+\end{lstlisting}
+\begin{itemize}
+    \item Delete: Drop transformation (deletes tuples satisfying a condition)
+\end{itemize}
+\begin{itemize}
+    \item In general, specify the type transformation, specify the table, write out the transformation
+    \item Integrity constraint: condition that must be true for any instance of the database (specified when schema is defined, checked when relations are modified)
+    \begin{itemize}
+        \item You can make a key for a relation if no distinct tuples can have the same values for all attributes in a key and no subset of the key is a key itself
+        \item One of the candidate keys is chosen by the DBA to be a primary key (same line for single attribute keys, its own statement for multiple attributes)
+    \end{itemize}
+\end{itemize}
+\begin{lstlisting}[language = SQL]
+CREATE TABLE Student
+    (sid INTEGER PRIMARY KEY,
+    name CHAR(20),
+    major CHAR(4))
+\end{lstlisting}
+\begin{itemize}
+    \item Primary key cannot be null and values must be unique
+    \item Other keys are specified using the UNIQUE constant (values for a group of attributes if not null, but they can be null)
+    \item Key constraints are checked when new values are inserted or values are modified
+    \item Denoted by underline
+\end{itemize}
+\begin{lstlisting}[language = SQL]
+CREATE TABLE Student
+    (sid INTEGER,
+    dept CHAR(4),
+    courseNum CHAR(3),
+    mark CHAR(2),
+    PRIMARY KEY(sid, dept, courseNum),
+    UNIQUE(dept, courseNum, mark))
+\end{lstlisting}
+\begin{itemize}
+    \item Foreign key: set of attributes in one relation used to reference a tuple in another
+    \begin{itemize}
+        \item Foreign keys must correspond to the primary key of the other relation
+        \item Referential integrity: All foreign keys referencing existing entities
+        \item ex. Grade(\textit{sid, dept, courseNum, grade}), sid is a foreign key referring to Student, dept and courseNum refer to Course
+        \item Bolded and underlined in relation (bolded = foreign, underline = part of the relation's primary key)
+    \end{itemize}
+\end{itemize}
+\begin{lstlisting}[language = SQL]
+CREATE TABLE Student
+    (sid INTEGER,
+    dept CHAR(4),
+    courseNum CHAR(3),
+    mark CHAR(2),
+    PRIMARY KEY(sid, dept, courseNum),
+    FOREIGN KEY (sid) REFERENCES Student,
+    FOREIGN KEY (dept, courseNum) REFERENCES Course(dept, cnum))
+\end{lstlisting}
+\begin{itemize}
+    \item When referencing attributes with different names between the relation and the relation being referenced from, specify which of the foreign relation's attributes are being referenced
+\end{itemize}
+\begin{lstlisting}[language = SQL]
+CREATE TABLE Student
+    (sid INTEGER,
+    dept CHAR(4),
+    courseNum CHAR(3),
+    mark CHAR(2),
+    PRIMARY KEY(sid, dept, courseNum),
+    FOREIGN KEY (sid) REFERENCES Student
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (dept, courseNum) REFERENCES Course(dept, cnum)
+        ON DELETE SET DEFAULT
+        ON UPDATE CASCADE)
+\end{lstlisting}
+\begin{itemize}
+    \item SQL supports 4 options on delete/update:
+    \begin{itemize}
+        \item Default is NO ACTION (rejects delete/update)
+        \item CASCADE: Updates/deletes all tuples that refer to the updated/deleted tuple
+        \item SET NULL/SET DEFAULT: Referencing tuple value is set to the default foreign key value/null respectively
+    \end{itemize}
+    \item Weak entity sets and its identifying relationship are translated into a single table (like many-1)
+    \begin{itemize}
+        \item Primary key is the owner's primary key + weak entity's partial key
+        \item When owner is deleted, ALL owned weak entities must also be deleted
+    \end{itemize}
+\end{itemize}
+
+\section*{\ul{Chapter 3: SQL Plus}}
+\begin{itemize}
+    \item Here are some common domain types in SQL:
+    \begin{itemize}
+        \item char(n): Fixed length string with length n
+        \item varchar(n): Variable length character strings with max length n
+        \item int: Integer
+        \item smallint: Small integer
+        \item numeric(p, d): Fixed point number with precision p digits with d decimal places
+        \item real, double precision: Floating point and double-precision floating point numbers, machine-dependent person
+        \item float(n): Floating point number with precision of at least n digits
+    \end{itemize}
+    \item Date/Time Types:
+    \begin{itemize}
+        \item date: Date with 4 digit year, month, date (2001-7-27)
+        \item time: Time of day in hours, minutes, seconds (09:00:30.75)
+        \item timestamp: date plus time of day (2001-7-27 09:00:30.75)
+        \item Interval: period of time
+    \end{itemize}
+    \item You can alias relations to create conditions specified in the WHERE clause of an SQL query
+    \begin{lstlisting} [language = SQL]
+SELECT Character, Name
+FROM StarsIn s, MovieStar m
+WHERE s.StarID = m.StarID
+    \end{lstlisting}
+    \item Joins are cross products (produce every possible combination of tuples)
+    \item DISTINCT is used to only return unique tuples
+    \begin{itemize}
+        \item Not equal is denoted by <> in SQL!
+        \item Can also use >, <, =, <=, >=
+    \end{itemize}
+    \item You can rename relations and attributes using AS
+    \begin{lstlisting} [language = SQL]
+SELECT Title, StarID AS ID
+FROM StarsIn S, Movie M
+WHERE M.MovieID = S.MovieID
+    \end{lstlisting}
+    \item Below is an example of string matching:
+    \begin{lstlisting} [language = SQL]
+SELECT DISTINCT snum
+FROM enrolled
+WHERE cname LIKE '%System%'
+    \end{lstlisting}
+    \begin{itemize}
+        \item LIKE is used for string matching, \_ is any 1 character and \% is 0+ arbitrary characters
+        \item You can use other operations like ||, changing case, string length, and substrings
+    \end{itemize}
+    \item ORDER BY \_ is used to order the tuples in asc (default) or desc order based on a specified field
+    \begin{itemize}
+        \item A OR B refers to union all
+        \item A AND B refers to intersect
+        \item A EXCEPT B keeps results found in A and not B
+    \end{itemize}
+    \item Suppose a tuple occurs m times in R and n times in S, it occurs:
+    \begin{itemize}
+        \item m + n times in R OR S
+        \item min(m, n) times in R AND S
+        \item max(0, m-n) times in R EXCEPT S
+    \end{itemize}
+    \begin{lstlisting} [language = SQL]
+SELECT StarID
+FROM Movie M, StarsIn S
+WHERE M.MovieID = S.MovieID AND year = 1944
+UNION
+SELECT StarID
+FROM Movie M, StarsIn S
+WHERE M.MovieID = S.MovieID AND year = 1974
+
+SELECT StarID
+FROM Movie M, StarsIn S
+WHERE M.MovieID = S.MovieID AND year = 1944
+INTERSECT
+SELECT StarID
+FROM Movie M, StarsIn S
+WHERE M.MovieID = S.MovieID AND year = 1974
+
+SELECT snum
+FROM enrolled e
+WHERE cname = Operating System Design
+EXCEPT
+SELECT snum
+FROM enrolled e
+WHERE cname = 'Database Systems'
+    \end{lstlisting}
+    \item Nested queries: query with a query within it
+    \begin{itemize}
+        \item SELECT, FROM, WHERE, or HAVING clauses can contain SQL queries
+        \item IN and NOT IN are used to query based on an input query
+    \end{itemize}
+    \begin{lstlisting} [language = SQL]
+SELECT M.StarID, M.Name
+FROM MovieStar M
+WHERE M.Gender = female AND
+M.StarID IN (SELECT S.StarID
+    FROM StarsIn S
+    WHERE MovieID = 28)
+    \end{lstlisting}
+    \begin{itemize}
+        \item EXISTS/NOT EXISTS: returns true/false if the input set isn't empty 
+        \item UNIQUE: returns true if there are no duplicates
+        \item You can also use set operators for nested queries
+    \end{itemize}
+    \item Division is used to express queries that include "for all" or "for every"
+    \item Method 1 (with EXCEPT):
+    \begin{lstlisting} [language = SQL]
+SELECT sname
+FROM Student S
+WHERE NOT EXISTS
+    ((SELECT C.name
+    FROM Class C)
+    EXCEPT
+        (SELECT E.cname
+        FROM Enrolled E
+        WHERE E.snum=S.snum))
+    \end{lstlisting}
+    \item Method 2 (with EXCEPT):
+    \begin{lstlisting} [language = SQL]
+SELECT sname
+FROM Student S
+WHERE NOT EXISTS (
+    SELECT C.name
+    FROM Class C
+    WHERE NOT EXISTS (SELECT E.snum
+        FROM Enrolled E
+        WHERE C.name= E.cname AND E.snum=S.snum))
+    \end{lstlisting}
+    \item These aggregate operators operate on a multiset of values and return a value:
+    \begin{itemize}
+        \item AVG: average value
+        \item MIN: minimum value
+        \item MAX: maximum value
+        \item SUM: sum of values
+        \item COUNT: number of values
+    \end{itemize}
+    \item These versions eliminate duplicates before applying the operation to the attribute
+    \begin{itemize}
+        \item COUNT(DISTINCT A)
+        \item SUM(DISTINCT A)
+        \item AVG(DISTINCT A)
+    \end{itemize}
+    \item GROUP BY divides the tuple into groups, HAVING applies an aggregate 
+    \item Consider the example: Find the age of the youngest student who is at least 19, for each major with at least 2 such students.
+    \begin{lstlisting} [language = SQL]
+SELECT major, MIN(age)
+FROM Student
+WHERE age >= 19
+GROUP BY major
+HAVING COUNT(*) > 1
+    \end{lstlisting}
+    \item In general:
+    \begin{lstlisting} [language = SQL]
+SELECT [DISTINCT] target-list
+FROM relation-list
+WHERE qualification
+GROUP BY grouping-list
+HAVING group-qualification
+ORDER BY target-list
+    \end{lstlisting}
+    \begin{itemize}
+        \item The target-list contains attribute names and terms with aggregate operations
+        \item These attributes must also be in grouping-list
+        \begin{itemize}
+            \item Each answer tuple corresponds to a group with a group being a set of tuples with the same value for all attributes in grouping-list
+            \item Selected attributes must have a single value per group
+        \end{itemize}
+        \item Attributes in group-qualification are either in grouping-list or are arguments to an aggregate operator
+    \end{itemize}
+    \item Views are used to hide data from some users, make queries easier, and modulate the database
+    \begin{itemize}
+        \item They can be used to present necessary info, while hiding details in underlying relations
+        \item View updates must occur at base tables
+    \end{itemize}
+    \begin{lstlisting} [language = SQL]
+Create View <view name> <attributes in view> AS <view definition>
+    \end{lstlisting}
+    \item Consider having tables Course(\ul{Course\#}, title, dept) and Enrolled(\ul{Course\#, sid}, mark)
+    \begin{itemize}
+        \item This view yields the dept, course\#, and marks for those courses where someone failed
+    \end{itemize}
+    \begin{lstlisting} [language = SQL]
+CREATE VIEW CourseWithFails(dept, course#, mark) AS
+    SELECT C.dept, C.course#, mark
+    FROM Course C, Enrolled E
+    WHERE C.course# = E.course# AND mark<50
+    \end{lstlisting}
+    \item Dropping a view does not affect any tuples in the underlying relations
+    \begin{lstlisting} [language = SQL]
+DROP VIEW <view name>
+    \end{lstlisting}
+    \begin{itemize}
+        \item DROP TABLE X RESTRICT: Drops table unless there's a view on it
+        \item DROP TABLE X CASCADE: Drops table and drops any view referencing it
+    \end{itemize}
+    \item Tuples may have null values, you can filter these with IS NULL/IS NOT NULL
+    \item Natural JOIN makes it so columns with the same name will only appear once (ie. returns the cross product of the two tables):
+    \begin{itemize}
+        \item Associated columns must have 1 or more pairs of identically named columns
+        \item Columns must be the same data type
+        \item Don't use ON clause
+    \end{itemize}
+    \begin{lstlisting} [language = SQL]
+SELECT *
+FROM student s natural join enrolled e
+    \end{lstlisting}
+    \item You need an outer join to get all students. There are several join types:
+    \begin{itemize}
+        \item Inner join: default - only includes matches
+        \item Left outer join: Includes all tuples from the right hand relation
+        \item Right outer join: Includes all tuples from the left hand relation
+        \item Full outer join: Includes all tuples from both relations
+    \end{itemize}
+    \begin{lstlisting} [language = SQL]
+SELECT *
+FROM Student S NATURAL LEFT OUTER JOIN Enrolled E
+    \end{lstlisting}
+    \item Here's the SQL from an insertion with values selected from another table:
+    \begin{lstlisting} [language = SQL]
+INSERT INTO Enrolled
+    SELECT 51135593, name
+    FROM Class
+    WHERE fid = 90873519
+    \end{lstlisting}
+    \item SQL for deleting tuples satisfying a specific conditions:
+    \begin{lstlisting} [language = SQL]
+DELETE FROM Student
+WHERE name = Smith
+    \end{lstlisting}
+    \item You can use CHECK conditional-expression to specify constraints over a single table
+    \item You can define an assertion to apply a constraint over multiple relations:
+    \begin{lstlisting} [language = SQL]
+CREATE ASSERTION totalEmployment
+CHECK (NOT EXISTS ((SELECT StarID FROM MovieStar)
+        EXCEPT
+        (SELECT StarID FROM StarsIn)))
+    \end{lstlisting}
+    \item Trigger is a procedure that starts automatically if specificed changes occur to the DBMS. A trigger has 3 processes
+    \begin{itemize}
+        \item Event (activates trigger)
+        \item Condition (tests whether trigger should run)
+        \item Action (procedure executed when trigger runs)
+    \end{itemize}
+    \item An active database is a database with triggers
+\end{itemize}
+
+\section*{\ul{Chapter 4: Data Warehousing}}
+\begin{itemize}
+    \item OLAP used to perform grouping and aggregation + other complex ops. Best way is to use a multidimensional model
+    \begin{itemize}
+        \item Set of numerical measures - quantities that are important
+        \item Fact table: relates dimensions to a measure via foreign keys (there can be multiple)
+        \item Set of dimensions - entities on which the measure depend on (ex. location, date)
+        \item Dimension table: table for a dimension
+    \end{itemize}
+    \item Star schema: One table for the fact, and one per dimension
+    \item Example Star Schema fact table and dimension tables: 
+    \begin{lstlisting}[language=SQL]
+    AllSales(storeID, itemID, custID, sales) /*fact table*/
+    Store(storeID, city, county, state) /*dimension tables*/
+    Item(itemID, category, color)
+    Customer(custID, came, gender, age)
+    \end{lstlisting}
+    \item A full star join joins the fact table and all of its dimensions (see below example code)
+    \item A star join has less than all dimensions
+    \begin{lstlisting}[language=SQL]
+SELECT *
+    FROM AllSales F, Store S, Item I, Customer C
+    WHERE F.storeID = S.storeID and
+    F.itemID = I.itemID and
+    F.custID = C.custID;
+    \end{lstlisting}
+    \item In a snowflake schema, each dimension is a set of tables with 1 table per level of hierarchy per dimension
+    \begin{itemize}
+        \item TIMES would be split into TIMES(timeid, date), DWEEK(date, week), DMONTH(date, month)
+        \item Has more foreign keys and joins but is useful if dimension table is big in size or expecting lots of updates
+    \end{itemize}
+    
+    \underline{OLAP Operations}
+    \item Roll-up: summarizes data by changing hierarchy of a dimension of dimension reduction 
+    \item Example 1 (hierarchy): Use roll-up on total sales by store, item, and customer to find total sales by item and customer for each county.
+    \begin{lstlisting}[language=SQL]
+        SELECT storeID, itemID, custID, SUM(sales)
+        FROM AllSales F
+        GROUP BY storeID, itemID, custID
+        
+        SELECT county, itemID, custID, SUM(sales)
+        FROM AllSales F, Store S
+        WHERE F.storeID = S.storeID
+        GROUP BY county, itemID, custID /*this is the roll up/
+    \end{lstlisting}
+    \item Example 2 (hierarchy): Use roll-up on total sales by store, item, and customer to find total sales by item, age, and county 
+    \begin{lstlisting}[language=SQL]
+        SELECT county, itemID, custID, SUM(sales)
+        FROM AllSales F, Store S
+        WHERE F.storeID = S.storeID
+        GROUP BY county, itemID, custID
+        
+        SELECT county, itemID, custID, SUM(sales)
+        FROM AllSales F, Store S, Customer C
+        WHERE F.storeID = S.storeID and F.custID = C.custID
+        GROUP BY county, itemID, age /*this is the roll up/
+    \end{lstlisting}
+    \item Example 3 (dimension): Use roll-up on total sales by item, age, and county to find total sales by item for each county. 
+    \begin{lstlisting}[language = SQL]
+        SELECT county, itemID, age, SUM(sales)
+        FROM AllSales F, Store S, Customer C
+        WHERE F.storeID = S.storeID and F.custID = C.custID
+        GROUP BY county, itemID, age
+
+        SELECT county, itemID, SUM(sales)
+        FROM AllSales F, Store S, 
+        WHERE F.storeID = S.storeID
+        GROUP BY county, itemID 
+    \end{lstlisting}
+    \item Drill-down (reverse of roll-up):  higher level to lower level summary (more detailed). Adding new dimensions.
+    \item Example 1 (hierarchy): Use drill-down on total sales by  item and age for each county to find total sales by item and age for each city.
+    \begin{lstlisting}[language=SQL]
+        SELECT county, itemID, age, SUM(sales)
+        FROM AllSales F, Store S, Customer C
+        WHERE F.storeID = S.storeID AND F.custID = C.custID
+        GROUP BY county, itemID, age
+
+        SELECT city, itemID, age, SUM (sales)
+        FROM AllSales F, Store S, Customer C
+        WHERE F.storeID = S.storeID AND F.custID = C.custID
+        GROUP BY city, itemID, age /*this is the drill down/
+    \end{lstlisting}
+    \item Example 2 (dimension): Use drill-down on total sales by item and county to find total sales by item and age for each county.
+    \begin{lstlisting}[language=SQL]
+        SELECT county, itemID, SUM(sales)
+        FROM AllSales F, Store S
+        WHERE F.storeID = S.storeID
+        GROUP BY county, itemID
+
+        SELECT city, itemID, age, SUM (sales)
+        FROM AllSales F, Store S, Customer C
+        WHERE F.storeID = S.storeID AND F.custID = C.custID
+        GROUP BY county, itemID, age /*this is the drill down/
+    \end{lstlisting}
+    \item Slicing: Slice by picking a specific value of ONE of the dimensions
+    \item Example 1: Use slicing on total sales by item and age for each county to find total sales by item and age in Santa Clara.
+    \begin{lstlisting}[language=SQL]
+        SELECT county, itemID, age, SUM(sales)
+        FROM AllSales F, Store S, Customer C
+        WHERE F.storeID = S.storeID AND F.custID = C.custID
+        GROUP BY county, itemID, age
+
+        SELECT itemID, age, SUM (sales)
+        FROM AllSales F, Store S, Customer C
+        WHERE F.storeID = S.storeID AND F.custID = C.custID AND S.county = "Santa Clara" /*this is the slicing/
+        GROUP BY itemID, age
+    \end{lstlisting}
+    \item Example 2: Use slicing on total sales by item and age for each county to find total sales by county and age for T-shirts.
+    \begin{lstlisting}[language=SQL]
+        SELECT county, itemID, age, SUM(sales)
+        FROM AllSales F, Store S, Customer C
+        WHERE F.storeID = S.storeID AND F.custID = C.custID
+        GROUP BY county, itemID, age
+
+        SELECT itemID, age, SUM (sales)
+        FROM AllSales F, Store S, Customer C, Item I
+        WHERE F.storeID = S.storeID AND F.custID = C.custID AND F.itemID = I.itemID AND category = "Tshit" /*slicing*/
+        GROUP BY county, age
+    \end{lstlisting}
+    \item Dicing: generate sub-cube by picking values for MULTIPLE dimensions
+    \item Example: Use dicing on total sales by item, age, and city to find total sales by age, category, and city for red items in California (CA).
+    \begin{lstlisting}[language=SQL]
+        SELECT city, itemID, age, SUM(sales)
+        FROM AllSales F, Store S, Customer C
+        WHERE F.storeID = S.storeID AND F.custID = C.custID
+        GROUP BY city, itemID, age
+
+        SELECT category, city, age, SUM (sales)
+        FROM AllSales F, Store S, Customer C, Item I
+        WHERE F.storeID = S.storeID AND F.custID = C.custID AND F.itemID = I.itemID AND color = "red" AND state = "CA" /*dicing*/
+        GROUP BY category, city, age
+    \end{lstlisting}
+    \item Pivoting: rotate cube to provide an alternative presentation of the data
+    \item Example: From total sales by store and customer, pivot to find total sales by item and store.
+    \begin{lstlisting}[language=SQL]
+        SELECT storeID, custID, SUM(sales)
+        FROM AllSales
+        GROUP BY storeID, custID
+
+        SELECT storeID, itemID, SUM (sales)
+        FROM AllSales
+        GROUP BY storeID, itemID /*pivoting (goes from custID to itemID)*/
+    \end{lstlisting}
+    \item Data cube: k-dimensional object containing fact data and dimensions. 
+    \begin{itemize}
+        \item Individual blocks are called cells, each can be uniquely identified with dimensions.
+        \item With 2 x 2 x 2 tuples, there are 3 x 3 x 3 combos (each dimension can be referred to as "All").
+        \item Dense cubes have data for all combinations of attributes, sparse cubes are missing at least 1. 
+        \item Sparse cube size = dense cube size x sparsity factor
+        \item In a 3-dimensional cube (ex. store, item, customer), 8 SQL queries are required to compute all cells
+        \item A k-D cube can be represented as a series of (k-1)-D cubes
+    \end{itemize}
+    \item Operation with CUBE:
+    \begin{lstlisting}[language=SQL]
+        SELECT dimension-attrs, aggregates
+        FROM tables
+        WHERE conditions
+        GROUP BY dimension-attrs WITH CUBE
+
+        SELECT storeID, itemID, custID, SUM (sales)
+        FROM AllSales
+        GROUP BY storeID, itemID custID WITH CUBE
+    \end{lstlisting}
+    \item Materialized view: View whose tuples are store in the database. Materialize a small set of views to answer most queries effectively
+    \item When computing costs to query, consider number of tuples to look at. Aim is to minimize cost.
+    \item Example: Calculate benefit of materializing a view.
+    What is the saving of {S, I} relative to {{S, I, C}, {S}}?
+
+    {S, I, C} = 6M, {S, I} = 0.8M, {S} = 0.01M
+
+    B{S, I} = 5.2M, B{S} = 0, B{I} = 5.2M, B{} = 0
+    
+    B({S, I}, {{S, I, C} {S}}) = 5.2M * 2
+    \item Find the best k views to materialize.
+
+    After calculating benefit, you'll find that {S, I} has the largest (materialize it). Re-calculate, then you'll see C has largest - materialize that as well.
+    \end{itemize}
+
+\section*{\ul{Chapter 5: Non-Relational DBs}}
+\begin{itemize}
+    \item Here are some characteristics of Relational Databases (and SQL)
+    \begin{itemize}
+        \item Great for transactional data (strict transactional requirements, ACID) - queries are flexible and independent of applications that depend on it
+        \item Transactional Data: Data contains information from transactions
+        \item Stable schema
+        \item Vertical scaling
+        \item Limited replication 
+        \item Partitioning
+        \item Rapid insert/update/delete
+    \end{itemize}
+    \item ACID properties help guarantee data visibility
+    \begin{itemize}
+        \item Atomicity - all of nothing
+        \item Consistency - no incomplete transactions
+        \item Isolation - each transaction is independent and only uses data from complete transactions
+        \item Durability - record of transactions is kept for backup and logging
+    \end{itemize}
+    \item Semi-structured data: Data has structure but not tabular. Data may have different attributes despite being the same "type" (ex. JSON, XML, etc.)
+    \item Unstructured data: Data not organized in a way that is conducive to processing (ex. blog post, video, etc.)
+    \item Big data: Contains volume, variety, velocity, and veracity
+    \begin{itemize}
+        \item To deal with big data, schema flexibility is needed
+        \item Must be processed quickly - parallelization may be a problem with relational engines
+        \item Typically requires more read and aggregation queries (rather than update and delete)
+    \end{itemize}
+    \item Scalability: Ability to handle increasing amounts of data. 
+    \begin{itemize}
+        \item Two types - vertical and horizontal
+        \item NoSQL does not necessarily mean distributed
+        \item Vertical scaling involves upgrading hardware (finite limit)
+        \begin{itemize}
+            \item Everything is on 1 machine. This ensures consistency but there is only 1 point of failure
+            \item Setup is easier
+        \end{itemize}
+        \item Horizontal scaling involves adding more machines to the cluster. This creates a distributed database and can be scaled as needed.
+        \begin{itemize}
+            \item Two ways to distribute data. Replicate same data across many servers (replication) or partition data into chunks and keep chunks on different servers (sharding)
+            \item May be more complicated to set up due to distributed nature of the machines
+            \item Data consistency across machines is an issue
+        \end{itemize}
+    \end{itemize}
+    \item There are two types of replication: primary-replica and peer to peer
+    \item In primary-replica, one "primary" machine manages others.
+    \begin{itemize}
+        \item Only the primary machine processes writes, all machines can process reads
+        \item Possible data synchronization problems and the primary machine becomes a bottleneck which may impact performance
+        \item If the primary fails, the replicas choose a new machine
+    \end{itemize}
+    \item In peer to peer, all machines can perform read/write operations
+    \begin{itemize}
+        \item Synchronizing changes can cause issues as writes can happen on different machines simultaneously. This may lead to the same query returning different results (tradeoff from horizontal scaling)
+        \item No bottleneck
+    \end{itemize}
+    \item Sharding involves the partitioning of data and storage on different machines (shards)
+    \item Note: Sharding is distribution across multiple servers, partitioning is across 1 server
+    \begin{itemize}
+        \item Systems use different policies to determine where data should go. Different systems have different replication policies, but it's common to replicate each shard twice
+        \item Re-sharding may happen as time passes, during this time, the number of shards may be increased or data may be partitioned differently
+        \item If a shard gets full, it may split automatically
+        \item Acts like a single DB and usually has an index to track where data is. This allows users to move data closer to where it is needed but creates additional complexity
+        \item There may be issues with data consistency and joins across tables become more difficult
+    \end{itemize}
+    \item Compare and contrast: transactional data vs big data
+    \begin{itemize}
+        \item Transactional Data:
+        \begin{itemize}
+            \item Schema: stable
+            \item Scaling: vertical
+            \item Transactions: stringent
+            \item Replication: limited
+            \item Fragmentation: partitioning
+            \item Processing; insert, update, delete
+        \end{itemize}
+        \item Big Data:
+        \begin{itemize}
+            \item Schema: flexible
+            \item Scaling: horizontal
+            \item Transactions: relaxed
+            \item Replication: extensive
+            \item Fragmentation: sharding
+            \item Processing: insert, update, aggregate
+        \end{itemize}
+    \end{itemize}
+    \item CAP theorem (consistency, availability, partition tolerance) states that in a distributed data storage system, you can only meet two out of three of these reqs
+    \begin{itemize}
+        \item As system is distributed, partition tolerance is required. Trade-off is between consistency and availability
+    \end{itemize}
+    \item NoSQL (not only SQL) DBs use BASE rather than acid. There are 4 types of NoSQL DBs:
+    \begin{itemize}
+        \item Column store
+        \item Document store
+        \item Key value store
+        \item Graph database
+        \item Hybrid DBs use several different models within 1 database
+    \end{itemize}
+    \item BASE stands for:
+    \begin{itemize}
+        \item Basically Available: Guarantees the availability of the data
+        \item Soft state: State of the system can change over time
+        \item Eventual consistency: System will eventually become consistent
+    \end{itemize}
+    \item Pros of NoSQL DBs:
+    \begin{itemize}
+        \item Data stored in a manner similar to programming languages (easier for people with no DB experience)
+        \item Distributed info storage
+        \item Can be dynamically scaled (flexible scaling) and no set schema
+        \item Potentially cheaper than relational DB and typically open source
+    \end{itemize}
+    \item Cons of NoSQL DBs:
+    \begin{itemize}
+        \item No guarantee of consistency. Weaker consistency guarantees compared to a relational DB.
+        \item Administration can be difficult across multiple servers
+        \item No data access standard or structure. Different NoSQL DBs have different query languages and may operate differently
+    \end{itemize}
+    \item Column store stores multiple versions of a value differentiated by timestamps. This allows for fast reading and writing as no searching/modifying is needed
+    \begin{itemize}
+        \item Quick vocab lesson:
+        \begin{itemize}
+            \item Table: The name of the table that holds the data (similar usage to relational databases)
+            \item Key: Used to identify individual rows (similar usage to relational databases)
+            \item Column Family: A group of columns referred to by a common name
+            \item Column: An individual column. The name of a column is unique within the column family. Each column has a single unstructured value.
+            \item Each row has the same number of column families but the number of columns inside each family can vary
+        \end{itemize}
+        \item Need table name, key value, column family, column name, and timestamp (optional) to identify a specific value
+        \item Supports a high volume of data and flexible schema
+        \item Columns within a family are stored together, but families are stored separately
+        \item Better suited for OLAP queries
+    \end{itemize}
+    \item Document store is a collection of documents, eash using JSON, BSON, and/or XML to store data
+    \begin{itemize}
+        \item All docs in a coll use the same format
+        \item Schema is adaptable as not all docs hacve to use the same schema
+        \item In all JSON docs, there's a unique identifier that can be searched (name values can be searched as well). More on JSON in MongoDB
+    \end{itemize}
+    \item Key value store is basically a has table
+    \begin{itemize}
+        \item Find and modify operations are well supported and very fast
+        \item Key can be any identifier and the value is most likely an object
+        \item Query speed is higher than a relational DB and it supports mass storage and has high concurrency
+        \item Great for situations where you only need has operations, such as:
+        \begin{itemize}
+            \item Get: returns assocaited value based on given key
+            \item Put: stores a key-value pair into the DB. If the key already exists, it replaces the associated value
+            \item Delete: deletes a key-value pair
+        \end{itemize}
+        \item Do not use if you need to find values based on a non-key value (ie. does not support SQL) or if the underlying data model is complex
+        \item Supports both structured and unstructured data and no limit on the size of the data for the values
+    \end{itemize}
+    \item Graph DBs consist of nodes/vertices and edges/links
+    \begin{itemize}
+        \item Each node represents data. Edges between nodes indicate a relationship between the nodes (directional)
+        \item Properties are info associated with nodes and edges        \item Graphs can be directed or undirected
+        No standardized so terminology and structure can vary
+        \item Good for situations where you are interested in relationships
+        \item Nodes/edges/properties can be added at any time
+    \end{itemize}
+    \item Property graphs are the most common type of graph DB. They are directed
+    \begin{itemize}
+        \item Vertex labels are a collection of vertices (like how entity sets store entities)
+        \item Edge labels are a collection of edges
+        \item Vertices and edges can have different properties
+        \item Common for transactional application
+    \end{itemize}
+    \item In triple store (also called RDF), each property is a vertex
+    \begin{itemize}
+        \item Commonly used in analytical applications
+        \item Good for interconnected data (supports ontology)
+    \end{itemize}
+    \item Data lakes are stores of data that can support structured, semi-structured, and unstructured data
+    \begin{itemize}
+        \item Used for analytical purposes
+        \item No need to pre-define a schema. Data can be stored in its original format
+    \end{itemize}
+    \item Compare and contrast DB vs data warehouse vs data lake
+    \begin{itemize}
+        \item Database:
+        \begin{itemize}
+            \item Workload - transactional
+            \item Data type - structured and semi-structured
+            \item Schema flexibility - rigid or flexible depending on type
+            \item Data freshness - real time
+            \item Data analytics approach - limited
+        \end{itemize}
+        \item Data warehouse:
+        \begin{itemize}
+            \item Workload - analytical
+            \item Data type - structured and semi-structured
+            \item Schema flexibility - pre-defined and fixed
+            \item Data freshness - depends on when files were last refreshed/when ETL was last run
+            \item Data analytics approach - top down 
+        \end{itemize}
+        \item Data lake:
+        \begin{itemize}
+            \item Workload - analytical
+            \item Data type - structured, semi-structured, and unstructured
+            \item Schema flexibility - none required (schema on read)
+            \item Data freshness - depends on when files were last refreshed
+            \item Data analytics approach - bottom up 
+        \end{itemize}
+    \end{itemize}
+    \end{itemize}
+
+\section*{\ul{Chapter 6: MongoDB}}
+\begin{itemize}
+    \item MongoDB is a document DB that stores info as JSON objects! Each JSON object is a document, a group of documents is a collection
+    \begin{itemize}
+        \item Each document has an \_id value and a max size of 16mb
+    \end{itemize}
+    \item Sample JSON Array (note the $\backslash$\_ is from verbatim)
+    \begin{verbatim}
+{
+    “_id”: 507f1f77bcf86cd799439011,
+    “firstName”: “Perry”,
+    “lastName”: “Platypus”,
+    “jobs”: [“family pet”, “secret agent”],
+    “address”: [
+        { “buildingNo”: 2366, 
+        “street”: “Main Mall”, 
+        “city”: “Vancouver”,      
+        ”province”: “BC”},
+        { “buildingNo”: 6245, 
+        “street”: “Agronomy Rd”, 
+        “city”: “Vancouver”,
+        ”province”: “BC”}
+    ]
+}             
+    \end{verbatim}  
+    \item A document has 0 to n embedded documents - this keeps data tgt resulting in fewer queries and update statements
+    \item DBrefs require a specific order - depending on driver, the behaviour may differ
+    \begin{verbatim}
+{
+“_id”: 345,
+// other fields
+“address”: {
+"$ref" : ”address", collection name
+"$id" : ObjectId(”123"), id of the document
+"$db" : "users” // database name
+    }
+}            
+    \end{verbatim}
+    \item Here's a compare and contrast between relational DBs and MongoDB:
+    \begin{itemize}
+        \item Database - Database
+        \item Table/View - Collection
+        \item Row - Document
+        \item Column - Field
+        \item Join - Embedded Doc
+        \item Foreign Key - Reference
+    \end{itemize}
+    \item MongoDB also follows the 4 basic operations: Create, Read, Update, Delete
+    \item In MongoDB, inserting into a nonexistent collection creates it. All docs must have a unique identifier, if no \_id is provided, one is assigned upon insertion
+    \begin{verbatim}
+db.insert_one(
+{“_id”:10, “item”: "canvas", 
+“qty”: 100, “tags”: ["cotton"], 
+    "size”: { “h”: 28, “w”: 35.5,
+    “uom”: "cm" } }
+)           
+    \end{verbatim}
+    \begin{verbatim}
+db.insert_many(
+{“item”: "canvas", “qty”: 100, “tags”:
+["cotton"], “size”: { “h”: 28, “w”: 35.5, 
+“uom”: "cm" } },
+    {“item”: ”flannel", “qty”: 100, “tags”:
+["cotton"], “size”: { “h”: 22, “w”: 27, 
+“uom”: "cm" } }
+)        
+    \end{verbatim}
+    \item In SQL, we have SELECT and FROM. In MongoDB, we have .find()
+    \begin{verbatim}
+db.collection_name.find({<field>:<value>,
+({<field>:<value>})      
+    \end{verbatim}
+    \item You can use \$in or \$or to replicate OR
+    \item Comparison:
+    \begin{lstlisting} [language = SQL]
+SELECT *,
+FROM Inventory,
+WHERE name = notebook and qty > 20
+
+SELECT *
+FROM Inventory 
+WHERE name = notebook OR name = paper
+
+SELECT * 
+FROM Inventory 
+WHERE name = notebook OR qty > 20
+    \end{lstlisting}
+    \begin{verbatim}
+db.find({”name”: “notebook”, “qty”: {"$gt":
+30}})      
+
+db.find({”name”: {"$in": “notebook”, 
+“paper”}})
+
+db.find({"$or": [{”name": ”notebook"}, 
+{"qty": {"$gt": 20}}]})
+    \end{verbatim}
+    \item Find functions return a cursor that can be used to iterate over the results
+    \begin{verbatim}
+cur = db.find({”name”: 
+    {"$in": “notebook”, “paper”}})
+
+for c in cur:
+    print(c)
+    \end{verbatim}
+    \item In Mongo, there are 2 versions of update:
+    \begin{itemize}
+        \item update\_one(): Updates the first document matching the condition
+        \item update\_many(): Updates many documents at once
+    \end{itemize}
+    \begin{lstlisting} [language = SQL]
+UPDATE Inventory 
+SET qty = 5 
+WHERE name = notebook
+    \end{lstlisting}
+    \begin{verbatim}
+db.update_one(
+    {“name”: “notebook”},
+    {"$set": {”qty": 5}}
+)
+    \end{verbatim}
+    \item In Mongo, there are 2 versions of delete:
+    \begin{itemize}
+        \item delete\_one(): Deletes the first document matching the condition
+        \item delete\_many(): Deletes all docs that match the condition
+    \end{itemize}
+    \begin{verbatim}
+db.collection_name.delete_many(
+{condition})
+    \end{verbatim}
+    \end{itemize}
+
+\section*{\ul{Chapter 7: Data Mining}}
+\begin{itemize}
+    \item Data mining: Exploration and analysis of data to discover valid, novel, possibly useful, and understandable patterns in data
+    \item Techniques include supervised learning (classification and regression), unsupervised learning (clustering), dependency modeling (association, correlation, etc.), outliers, and trend analysis
+    \item Rules are valid if support is above min support and confidence is above min confidence
+    \begin{itemize}
+        \item Support measures if items appear together a lot of time. A rule X -> Y holds with support sup if sup\% of all transactions contain X and Y 
+        \item Confidence measures which which items suggest others will be there. A rule X -> Y holds confidence conf\% if conf\% of transactions that contain X also contain Y
+    \end{itemize}
+    \item Frequent itemset: Set of items with AT LEAST minimum support
+    \item Apriori algorithm: Each subset of a frequent itemset must also be a frequent itemset. Increase in size with successive rounds until no more can be made
+    \item All of the itemsets found are frequent itemsets
+    \item Example: Finding frequent itemsets given:
+T1 - apple, dates, rice, corn
+T2 - corn, dates, tuna
+T3 - apple, corn, dates, tuna
+T4 - corn, tuna
+*min support is 50% 
+
+Itemsets of size 1:
+{apple} = 2/4, {corn} = 4/4, {dates} = 3/4, {tuna} = 3/4. 
+{rice} = 1/4 and is eliminated
+
+Find frequent itemsets of size 2:
+{apple, corn} = 2/4, {apple, dates} = 2/4, {corn, dates} = 3/4, {corn, tuna} = 3/4, {dates, tuna} = 2/4. 
+can eliminate everything with rice, {apple, tuna} has 1/4 and is also eliminated. 
+
+Find frequent itemsets of size 3:
+{apple, corn, dates} = 2/4, {corn, dates, tuna} = 2/4.
+
+No valid itemsets of size 4.
+
+Answer is union of all valid frequent itemsets!
+
+    \item Clustering is a type of unsupervised learning (ie. data does not need to be labeled)
+    \item When determining cluster quality, can consider: intra-class similarity (points in a cluster are close to each other), inter-class dissimilarity (points in different clusters are far from each other), and size similarity (clusters have similar size)
+    \item k-means clustering algorithm:
+    \begin{itemize}
+        \item Choose centroid to act as center of clusters, repeat until answer stabilizes
+        \item Cluster assignment - determine which of the k centroids its closest to and put it in the cluster of that centroid
+        \item Move centroid - average points in each cluster to get a new centroid 
+    \end{itemize}
+    \item if any points change clusters, repeat again!
+\end{itemize}
+
+\section*{\ul{Chapter 8: Data Privacy}}
+\begin{itemize}
+    \item Encryption protects data by scrambling it according to an algorithm
+    \begin{itemize}
+        \item End-to-end encryption makes it so only you and the person you're talking to can decrypt the message
+    \end{itemize}
+    \item VPNs allow you to encrypt and disguise internet traffic by routing it through another computer first
+    \item Cookies are small files used by a web browser to store information
+    \item Anonymizing data takes away identifiers that would identify data as belonging to a particular person
+    \item RTBF: ability to have private info removed from searches and directories under certain circumstances
+    \end{itemize}
+    
+\end{multicols*}
+\end{document}
